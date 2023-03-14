@@ -20,23 +20,26 @@ const icon = L.icon({
 const markers = [];
 markersCanvas.addTo(map);
 
+const html = (i) =>
+  `<p>I am ${i}</p><button type="button" id="reset-${i}">Reset</button>`;
+
 [...Array(10).keys()].forEach((i) => {
   const lat = 51 + Math.random();
   const lng = Math.random();
-  const marker = L.marker([lat, lng], { icon })
-    .bindPopup("I Am " + i)
-    .on({
-      mouseover(e) {
-        this.openPopup();
-      },
-      mouseout(e) {
-        this.closePopup();
-      },
-    });
+  const marker = L.marker([lat, lng], { icon }).bindPopup(html(i));
+
+  marker.on("click", (e) => {
+    document
+      .querySelector("button")
+      .addEventListener("click", () => deleteMarker(marker));
+  });
 
   markers.push(marker);
 });
 
-markersCanvas.addMarkers(markers);
+function deleteMarker(marker) {
+  marker.closePopup();
+  markersCanvas.removeMarker(marker);
+}
 
-L.marker([52, 0], { icon }).addTo(map);
+markersCanvas.addMarkers(markers);
